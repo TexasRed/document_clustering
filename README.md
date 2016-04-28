@@ -21,7 +21,6 @@ After you unzip the kxh132430_hw4.zip file, you will see three directories:
    -- src/                     The source code for the clustering system.
       --- cluster              
                                The driver python script for the program.
-
       --- document_clustering  
                                A python package that implements K-means and Ward clustering algorithm.
       --- setup.py             
