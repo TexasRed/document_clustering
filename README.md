@@ -61,9 +61,9 @@ After you unzip the kxh132430_hw4.zip file, you will see three directories:
                                
 
 
-## III. How to Run the Program
+## III. Install and Run the Program
 
-### Prerequisites:
+### Installation:
 
 To run the program, you need Python 2.7.x installed on your PC. 
 
