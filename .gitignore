@@ -44,6 +44,8 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+.idea/
+.DS_Store
 
 # Translations
 *.mo

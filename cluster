@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+import os
+import sys
+import argparse
+from document_clustering.digest.parser import Parser
+from document_clustering.digest.vectorizer import Vectorizer
+from document_clustering.cluster.kmm import Kmm
+from document_clustering.cluster.hac import Hac
+
+
+def summary(topics, sample_size):
+    for topic in topics:
+        if topic not in DEFAULT_TOPICS:
+            print 'Topic %s has not been archived!' % topic
+            sys.exit(-1)
+    print 'Selected Topics:'.ljust(30) + str(topics)
+    print 'Total Topics:'.ljust(30) + str(len(topics))
+    print 'Documents in each Topic:'.ljust(30) + str(sample_size)
+    print 'Total Documents:'.ljust(30) + str(sample_size * len(topics))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', "--topics", type=str, nargs='+', default=DEFAULT_TOPICS, help="topics of the news")
+    parser.add_argument("-a", "--algorithm", type=str, default='kmm', choices=['kmm', 'hac'],
+                        help="the document clustering algorithm")
+    parser.add_argument("-s", "--size", type=int, default=5, help="the size of the sample from each topic [1-100]")
+    parser.add_argument("-i", "--input", type=str, default='./input', help="default input folder")
+    parser.add_argument("-o", "--output", type=str, default='./output', help="default output folder")
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose mode")
+    args = parser.parse_args()
+
+    input_dir = args.input
+    output_dir = args.output
+    if not os.path.exists(input_dir) or not os.path.exists(output_dir):
+        print '[Error:] Incorrect input and output file path!'
+        print 'Please set the correct input and output folder path.'
+        sys.exit(-1)
+
+    topics = args.topics
+    sample_size = args.size
+    if not sample_size in range(1, 101):
+        print '[Error:] Sample size out of range!'
+        print 'Please specify a sample size between 1 and 100.'
+        sys.exit(-1)
+
+    summary(topics, sample_size)
+
+    parser = Parser(input_dir=input_dir, sample_size=sample_size)
+    parsed_data = parser.parse(topics)
+
+    vectorizer = Vectorizer()
+    vectorizer.vectorize(parsed_data[2])
+
+    if args.algorithm == 'kmm':
+        kmm = Kmm(parsed_data, vectorizer, num_clusters=len(topics), output_dir=output_dir)
+        kmm.display(show_top_words=(True if args.verbose is True else False))
+        kmm.plot()
+        kmm.plot(file_format='png')
+    elif args.algorithm == 'hac':
+        hac = Hac(parsed_data, vectorizer, num_clusters=len(topics), output_dir=output_dir)
+        hac.display()
+        hac.plot()
+    else:
+        print "Invalid algorithm!"
+
+
+if __name__ == '__main__':
+    DEFAULT_TOPICS = ['business', 'entertainment', 'sports', 'health', 'politics', 'technology']
+    main()
+
+
