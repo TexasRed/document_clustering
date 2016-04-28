@@ -78,8 +78,8 @@ The pip tool will automatically install all the dependencies for you.
 Type  in "python " to enter Python Interpreter interactive mode. In this mode, type in:
 
 ```python
->>> import nltk
->>> nltk.download()
+   >>> import nltk
+   >>> nltk.download()
 ```
 
 nltk will automatically download the corpus data(stopwords) and install on your system.
